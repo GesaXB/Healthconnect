@@ -16,60 +16,70 @@ model User {
   role      Role
   createdAt DateTime @default(now())
 
-  consultationsAsPatient Consultation[] @relation("PatientConsultation")
-  consultationsAsDoctor  Consultation[] @relation("DoctorConsultation")
+  consultationsAsPatient Consultation[]       @relation("PatientConsultation")
+  consultationsAsDoctor  Consultation[]       @relation("DoctorConsultation")
   reminders              Reminder[]
-  medicalRecords         MedicalRecord[] @relation("PatientMedicalRecord")
-  writtenRecords         MedicalRecord[] @relation("DoctorMedicalRecord")
+  medicalRecords         MedicalRecord[]      @relation("PatientMedicalRecord")
+  writtenRecords         MedicalRecord[]      @relation("DoctorMedicalRecord")
+  passwordResetTokens    PasswordResetToken[]
   chatMessages           ChatMessage[]
 }
 
 model Consultation {
-  id         String   @id @default(cuid())
-  patient    User     @relation("PatientConsultation", fields: [patientId], references: [id])
-  patientId  String
-  doctor     User     @relation("DoctorConsultation", fields: [doctorId], references: [id])
-  doctorId   String
-  status     ConsultationStatus @default(PENDING)
-  startedAt  DateTime?
-  endedAt    DateTime?
-  createdAt  DateTime @default(now())
+  id        String             @id @default(cuid())
+  patient   User               @relation("PatientConsultation", fields: [patientId], references: [id])
+  patientId String
+  doctor    User               @relation("DoctorConsultation", fields: [doctorId], references: [id])
+  doctorId  String
+  status    ConsultationStatus @default(PENDING)
+  startedAt DateTime?
+  endedAt   DateTime?
+  createdAt DateTime           @default(now())
 
   chatMessages ChatMessage[]
 }
 
 model ChatMessage {
-  id              String   @id @default(cuid())
-  consultation    Consultation? @relation(fields: [consultationId], references: [id])
-  consultationId  String?
-  sender          User     @relation(fields: [senderId], references: [id])
-  senderId        String
-  message         String
-  isBot           Boolean  @default(false)
-  createdAt       DateTime @default(now())
+  id             String        @id @default(cuid())
+  consultation   Consultation? @relation(fields: [consultationId], references: [id])
+  consultationId String?
+  sender         User          @relation(fields: [senderId], references: [id])
+  senderId       String
+  message        String
+  isBot          Boolean       @default(false)
+  createdAt      DateTime      @default(now())
 }
 
 model Reminder {
-  id         String   @id @default(cuid())
-  patient    User     @relation(fields: [patientId], references: [id])
-  patientId  String
-  medName    String
-  time       String
-  frequency  ReminderFrequency
-  isActive   Boolean  @default(true)
-  createdAt  DateTime @default(now())
+  id        String            @id @default(cuid())
+  patient   User              @relation(fields: [patientId], references: [id])
+  patientId String
+  medName   String
+  time      String
+  frequency ReminderFrequency
+  isActive  Boolean           @default(true)
+  createdAt DateTime          @default(now())
 }
 
 model MedicalRecord {
-  id             String   @id @default(cuid())
-  patient        User     @relation("PatientMedicalRecord", fields: [patientId], references: [id])
-  patientId      String
-  doctor         User     @relation("DoctorMedicalRecord", fields: [doctorId], references: [id])
-  doctorId       String
-  diagnosis      String
-  treatmentPlan  String?
-  notes          String?
-  createdAt      DateTime @default(now())
+  id            String   @id @default(cuid())
+  patient       User     @relation("PatientMedicalRecord", fields: [patientId], references: [id])
+  patientId     String
+  doctor        User     @relation("DoctorMedicalRecord", fields: [doctorId], references: [id])
+  doctorId      String
+  diagnosis     String
+  treatmentPlan String?
+  notes         String?
+  createdAt     DateTime @default(now())
+}
+
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
 }
 
 enum Role {

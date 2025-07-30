@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { signIn } from 'next-auth/react'
 import Link from 'next/link';
+import { useState } from 'react';
 
 interface LoginFormProps {
   onSubmit: (formData: globalThis.FormData) => Promise<void>;
@@ -213,6 +214,7 @@ export default function LoginForm({ onSubmit, loading, error }: LoginFormProps) 
         </div>
         <div className="mt-4 grid grid-cols-1 gap-3">
           <motion.button
+            onClick={() => signIn('google')}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             className="w-full inline-flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all"
